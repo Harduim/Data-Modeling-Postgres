@@ -1,7 +1,7 @@
 import os
 from contextlib import contextmanager
 from glob import glob
-from typing import Callable, Generator
+from typing import Callable, Iterator
 
 import pandas as pd
 import psycopg2
@@ -23,21 +23,20 @@ def get_connection() -> cursor:
         yield cur
     except Exception:
         conn.rollback()
-        conn.close()
         raise
     finally:
         conn.commit()
         conn.close()
 
 
-def get_files(filepath: str) -> Generator[str]:
+def get_files(filepath: str) -> Iterator[str]:
     """Get the absolute path for all json files in a given folder
 
     Args:
         filepath (str): Folder path
 
     Yields:
-        Generator[str]: Absolute path for a json file
+        Iterator[str]: Absolute path for a json file
     """
     for root, _, files in os.walk(filepath):
         files = glob(os.path.join(root, "*.json"))
@@ -57,7 +56,7 @@ def process_song_file(cur: cursor, filepath: str):
 
     # insert song record
     song_data = list(df.loc[0, ["song_id", "title", "artist_id", "year", "duration"]].values)
-    song_data = [f"{col}" for col in song_data]
+    song_data = [str(col) for col in song_data]
     cur.execute(sql.song_table_insert, song_data)
 
     # insert artist record
@@ -65,7 +64,7 @@ def process_song_file(cur: cursor, filepath: str):
     artist_data = list(df.loc[0, cols].values)
 
     # converting all cells to str
-    artist_data = [f"{col}" for col in artist_data]
+    artist_data = [str(col) for col in artist_data]
     cur.execute(sql.artist_table_insert, artist_data)
 
 
@@ -93,9 +92,10 @@ def process_log_file(cur: cursor, filepath: str):
 
     for row in df.itertuples(index=False):
         time_vals = (row.ts, row.hour, row.day, row.week, row.month, row.year, row.weekday)
+        time_vals = [str(col) for col in time_vals]
         cur.execute(sql.time_table_insert, time_vals)
 
-        user_vals = (row.userId, row.firtName, row.lastName, row.gender, row.level)
+        user_vals = (row.userId, row.firstName, row.lastName, row.gender, row.level)
         cur.execute(sql.user_table_insert, user_vals)
 
         # get songid and artistid from song and artist tables
@@ -105,21 +105,21 @@ def process_log_file(cur: cursor, filepath: str):
         if results:
             songid, artistid = results
         else:
-            print("this should be possible ????")
+            print("should this be possible ????")
             songid, artistid = None, None
 
         # insert songplay record
         cur.execute(
             sql.songplay_table_insert,
             (
-                row.ts,
-                row.userId,
-                row.level,
-                songid,
-                artistid,
-                row.sessionId,
-                row.location,
-                row.userAgent,
+                f"{row.ts:%Y-%m-%d %H:%M:%S}",
+                str(row.userId),
+                str(row.level),
+                str(songid),
+                str(artistid),
+                str(row.sessionId),
+                str(row.location),
+                str(row.userAgent),
             ),
         )
 

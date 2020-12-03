@@ -10,15 +10,16 @@ time_table_drop = "DROP TABLE IF EXISTS time;"
 
 songplay_table_create = """
 CREATE TABLE songplays (
-    "songplay_id" int NOT NULL IDENTITY, -- <=======
+    "songplay_id" serial NOT NULL,
     "start_time" date NOT NULL,
-    "user_id" date NOT NULL,
-    "level" int NOT NULL,
+    "user_id" int NOT NULL,
+    "level" varchar NOT NULL,
     "song_id" varchar NOT NULL,
     "artist_id" varchar NOT NULL,
     "session_id" int NOT NULL,
     "location" text NOT NULL,
-    "user_agent" text NOT NULL
+    "user_agent" text NOT NULL,
+    CONSTRAINT songplays_pkey PRIMARY KEY (songplay_id)
 );
 """
 
@@ -69,7 +70,7 @@ CREATE TABLE "time" (
 songplay_table_insert = """
 INSERT INTO songplays
 ("start_time", "user_id", "level", "song_id", "artist_id", "session_id", "location", "user_agent")
-VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s);
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 user_table_insert = """
@@ -100,11 +101,11 @@ VALUES(%s, %s, %s, %s, %s, %s, %s);
 # FIND SONGS
 
 song_select = """
-SELECT "song_id", "artist_id"
+SELECT s.song_id, a.artist_id
 FROM songs AS s
 INNER JOIN artists AS a ON s.artist_id = a.artist_id
-WHERE s.duration = %s AND
-      a.artist_name" = %s AND
+WHERE s.title = %s AND
+      a.name = %s AND
       s.duration = %s;
 """
 
