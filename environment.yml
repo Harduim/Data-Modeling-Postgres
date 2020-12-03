@@ -1,0 +1,7 @@
+name: rubrics
+channels:
+  - defaults
+dependencies:
+  - pandas
+  - psycopg2
+  - jupyter
