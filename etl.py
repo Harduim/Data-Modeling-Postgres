@@ -85,7 +85,7 @@ def process_log_file(cur: cursor, filepath: str):
     df.ts = df.ts.astype("datetime64[ms]")
     df["hour"] = df.ts.dt.hour
     df["day"] = df.ts.dt.day
-    df["week"] = df.ts.dt.isocalendar().week
+    df["week"] = df.ts.dt.week
     df["month"] = df.ts.dt.month
     df["year"] = df.ts.dt.year
     df["weekday"] = df.ts.dt.weekday
@@ -99,13 +99,12 @@ def process_log_file(cur: cursor, filepath: str):
         cur.execute(sql.user_table_insert, user_vals)
 
         # get songid and artistid from song and artist tables
-        cur.execute(sql.song_select, (row.song, row.artist, row.length))
+        cur.execute(sql.song_select, (row.length, row.artist, row.song))
         results = cur.fetchone()
 
         if results:
             songid, artistid = results
         else:
-            print((row.song, row.artist, row.length))
             continue
 
         # insert songplay record
