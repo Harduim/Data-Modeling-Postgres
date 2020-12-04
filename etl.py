@@ -91,7 +91,15 @@ def process_log_file(cur: cursor, filepath: str):
     df["weekday"] = df.ts.dt.weekday
 
     for row in df.itertuples(index=False):
-        time_vals = (row.ts, row.hour, row.day, row.week, row.month, row.year, row.weekday)
+        time_vals = (
+            f"{row.ts:%Y-%m-%d %H:%M:%S}",
+            row.hour,
+            row.day,
+            row.week,
+            row.month,
+            row.year,
+            row.weekday,
+        )
         time_vals = [str(col) for col in time_vals]
         cur.execute(sql.time_table_insert, time_vals)
 
@@ -99,7 +107,7 @@ def process_log_file(cur: cursor, filepath: str):
         cur.execute(sql.user_table_insert, user_vals)
 
         # get songid and artistid from song and artist tables
-        cur.execute(sql.song_select, (row.length, row.artist, row.song))
+        cur.execute(sql.song_select, (row.song, row.artist, row.length))
         results = cur.fetchone()
 
         if results:
@@ -148,6 +156,13 @@ def main():
     with get_connection() as cur:
         process_data(cur, filepath="data/song_data", func=process_song_file)
         process_data(cur, filepath="data/log_data", func=process_log_file)
+
+        cur.execute(
+            """UPDATE artists SET "location" = NULL WHERE "location" IN ('', 'NULL', 'NaN');
+               UPDATE artists SET "latitude" = NULL WHERE "latitude" = 'NaN';
+               UPDATE artists SET "longitude" = NULL WHERE "longitude" = 'NaN';
+               """
+        )
 
 
 if __name__ == "__main__":
