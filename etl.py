@@ -105,8 +105,8 @@ def process_log_file(cur: cursor, filepath: str):
         if results:
             songid, artistid = results
         else:
-            print("should this be possible ????")
-            songid, artistid = None, None
+            print((row.song, row.artist, row.length))
+            continue
 
         # insert songplay record
         cur.execute(
