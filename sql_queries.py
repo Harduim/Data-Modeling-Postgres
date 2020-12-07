@@ -14,15 +14,13 @@ CREATE TABLE songplays (
     "start_time" timestamp NOT NULL,
     "user_id" int NOT NULL,
     "level" varchar NOT NULL,
-    "song_id" varchar NOT NULL,
-    "artist_id" varchar NOT NULL,
+    "song_id" varchar NULL,
+    "artist_id" varchar NULL,
     "session_id" int NOT NULL,
     "location" text NOT NULL,
     "user_agent" text NOT NULL,
     CONSTRAINT songplays_pkey PRIMARY KEY (songplay_id),
     CONSTRAINT songplays_un UNIQUE (start_time, user_id, song_id),
-    CONSTRAINT songplays_fk FOREIGN KEY (artist_id) REFERENCES artists(artist_id),
-    CONSTRAINT songplays_fk_1 FOREIGN KEY (song_id) REFERENCES songs(song_id),
     CONSTRAINT songplays_fk_2 FOREIGN KEY (user_id) REFERENCES users(user_id),
     CONSTRAINT songplays_fk_3 FOREIGN KEY (start_time) REFERENCES "time"(start_time)
 );

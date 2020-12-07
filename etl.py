@@ -113,7 +113,7 @@ def process_log_file(cur: cursor, filepath: str):
         if results:
             songid, artistid = results
         else:
-            continue
+            songid, artistid = None, None
 
         # insert songplay record
         cur.execute(
@@ -161,6 +161,8 @@ def main():
             """UPDATE artists SET "location" = NULL WHERE "location" IN ('', 'NULL', 'NaN');
                UPDATE artists SET "latitude" = NULL WHERE "latitude" = 'NaN';
                UPDATE artists SET "longitude" = NULL WHERE "longitude" = 'NaN';
+               UPDATE songplays SET "song_id" = NULL WHERE "song_id" = 'None';
+               UPDATE songplays SET "artist_id" = NULL WHERE "artist_id" = 'None';
                """
         )
 
