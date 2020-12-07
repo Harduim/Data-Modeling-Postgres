@@ -12,7 +12,7 @@ import sql_queries as sql
 
 @contextmanager
 def get_connection() -> cursor:
-    """ensure the connection is committed and closed, or rollbacked in case of errors
+    """ensures the connection is committed and closed, or rollbacked in case of errors
 
     Yields:
         psycopg2 cursor

@@ -1,4 +1,4 @@
-# Data Modeling with Postgres | Udacity Project | rubrics
+# Data Modeling with Postgres | Udacity Project
 
 Main goals of this project:  
 - To Define fact and dimension tables for a star schema for a particular analytic focus
