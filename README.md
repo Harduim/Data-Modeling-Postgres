@@ -1,4 +1,4 @@
-# Data Modeling with Postgres | Udacity Project
+# Data Modeling with Postgres | Udacity Project 01
 
 Main goals of this project:  
 - To Define fact and dimension tables for a star schema for a particular analytic focus
@@ -13,7 +13,7 @@ Main goals of this project:
 
 ### Database
 - Navigate to the project folder
-- Create the postgress container: `docker-compose up`
+- Create the postgres container: `docker-compose up`
 - Create the **sparkifydb** database and tables: `python3 create_tables.py`
 
 ### Conda
